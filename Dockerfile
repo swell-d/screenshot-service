@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-RUN git clone git@github.com:swell-d/screenshot-service.git .
+RUN git clone https://github.com/swell-d/screenshot-service.git .
 RUN npm install
 
 EXPOSE 5015
