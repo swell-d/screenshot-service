@@ -16,26 +16,10 @@ let browser;
 
 (async () => {
     try {
-        const env = {
-            ...process.env,
-            HOME: '/tmp',
-            XDG_CACHE_HOME: '/tmp/.cache',
-            XDG_CONFIG_HOME: '/tmp/.config',
-            XDG_DATA_HOME: '/tmp/.local/share'
-        };
         browser = await puppeteer.launch({
             headless: true,
             userDataDir: '/tmp/puppeteer_profile',
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-crash-reporter',
-                '--no-zygote',
-                '--single-process',
-                '--ignore-certificate-errors'
-            ],
-            env
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-crash-reporter', '--ignore-certificate-errors'],
         });
         console.log('Puppeteer browser started');
     } catch (err) {
