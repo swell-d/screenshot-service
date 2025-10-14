@@ -1,1 +1,1 @@
-docker compose up -d
+docker build -t screenshot-service:latest .
