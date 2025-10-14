@@ -12,14 +12,22 @@ if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, {recursive: true});
 }
 
-let browser;  // глобальный браузер
+let browser;
 
-// Инициализируем браузер при старте
 (async () => {
     try {
         browser = await puppeteer.launch({
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--ignore-certificate-errors'],
+            userDataDir: '/tmp/puppeteer_profile',
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-crash-reporter',
+                '--no-zygote',
+                '--single-process',
+                '--ignore-certificate-errors'
+            ]
         });
         console.log('Puppeteer browser started');
     } catch (err) {
@@ -47,7 +55,6 @@ app.get('/screenshot', async (req, res) => {
         page = await browser.newPage();
         await page.setViewport({width: 1536, height: 630});
 
-        // Загружаем страницу и проверяем HTTP статус
         const response = await page.goto(url, {waitUntil: 'load', timeout: 30000});
 
         if (!response) {
