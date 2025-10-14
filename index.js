@@ -90,6 +90,10 @@ app.get('/screenshot', async (req, res) => {
     }
 });
 
+app.get('/health', (req, res) => {
+    res.json({status: 'ok'});
+});
+
 app.listen(PORT, () => {
     console.log(`Screenshot service listening on port ${PORT}`);
 });
