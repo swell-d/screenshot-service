@@ -8,8 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+USER node
 WORKDIR /app
-RUN git clone --depth=1 https://github.com/swell-d/screenshot-service.git .
+RUN git clone --depth=1 https://github.com/swell-d/screenshot-service.git /app
 
 RUN npm install
 
