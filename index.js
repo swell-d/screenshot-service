@@ -16,6 +16,13 @@ let browser;
 
 (async () => {
     try {
+        const env = {
+            ...process.env,
+            HOME: '/tmp',
+            XDG_CACHE_HOME: '/tmp/.cache',
+            XDG_CONFIG_HOME: '/tmp/.config',
+            XDG_DATA_HOME: '/tmp/.local/share'
+        };
         browser = await puppeteer.launch({
             headless: true,
             userDataDir: '/tmp/puppeteer_profile',
@@ -27,7 +34,8 @@ let browser;
                 '--no-zygote',
                 '--single-process',
                 '--ignore-certificate-errors'
-            ]
+            ],
+            env
         });
         console.log('Puppeteer browser started');
     } catch (err) {
