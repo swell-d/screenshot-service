@@ -12,6 +12,7 @@ USER node
 WORKDIR /app
 RUN git clone --depth=1 https://github.com/swell-d/screenshot-service.git /app
 
+RUN mkdir -p /home/node/.cache/puppeteer /home/node/.config /tmp/chrome-user-data /tmp/chrome-crash && chown -R node:node /home/node /tmp
 RUN npm install
 RUN npx puppeteer browsers install chrome
 
