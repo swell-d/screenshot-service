@@ -13,6 +13,7 @@ WORKDIR /app
 RUN git clone --depth=1 https://github.com/swell-d/screenshot-service.git /app
 
 RUN npm install
+RUN npx puppeteer browsers install chrome
 
 EXPOSE 5015
 CMD ["npm", "start"]
