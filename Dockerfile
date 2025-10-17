@@ -14,6 +14,8 @@ RUN git clone --depth=1 https://github.com/swell-d/screenshot-service.git /app
 
 RUN npm install
 RUN npx puppeteer browsers install chrome
+RUN cp -a /home/node/.cache /home/node/cache
 
 EXPOSE 5015
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["npm", "start"]
