@@ -1,1 +1,24 @@
-
+services:
+  screenshot-service:
+    user: "node"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: screenshot-service:latest
+    restart: unless-stopped
+    ports:
+      - "5015:5015"
+    # read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    init: true
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:5015/health || exit 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
