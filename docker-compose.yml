@@ -11,6 +11,9 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+      - /run
+      - /home/node/.config
+      - /home/node/.local
     security_opt:
       - no-new-privileges:true
     cap_drop:
