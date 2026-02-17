@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     ports:
       - "5015:5015"
-    # read_only: true
+    read_only: true
     tmpfs:
       - /tmp
     security_opt:
