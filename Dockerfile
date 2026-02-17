@@ -16,7 +16,7 @@ ENV PUPPETEER_CACHE_DIR=/home/node/.cache/puppeteer
 
 USER node
 WORKDIR /app
-RUN git clone --depth=1 https://github.com/swell-d/screenshot-service.git /app
+RUN git clone --depth=1 https://github.com/swell-d/screenshot-service.git /app && rm -rf /app/.git
 
 RUN npm install
 RUN PUPPETEER_CACHE_DIR=/home/node/.cache/puppeteer \
