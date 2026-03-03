@@ -71,6 +71,14 @@ app.get('/screenshot', async (req, res) => {
             await new Promise(resolve => setTimeout(resolve, 5000));
         }
 
+        // Hide spinner and any overlays before taking screenshot
+        await page.evaluate(() => {
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) spinner.style.display = 'none';
+            const overlay = document.getElementById('welcomeOverlay');
+            if (overlay) overlay.style.display = 'none';
+        });
+
         await page.screenshot({
             path: filepath,
             type: 'jpeg',
