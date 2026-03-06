@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV LANG=en_US.UTF-8
 ENV DBUS_SESSION_BUS_ADDRESS=autolaunch:
 ENV PUPPETEER_CACHE_DIR=/home/node/.cache/puppeteer
+ENV CHROME_CRASHPAD_PIPE_NAME=0
 
 USER node
 WORKDIR /app

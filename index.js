@@ -18,9 +18,10 @@ let browser;
     try {
         browser = await puppeteer.launch({
             headless: true,
-            userDataDir: '/tmp/puppeteer_profile',
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-crash-reporter', '--ignore-certificate-errors',
-                   '--user-data-dir=/tmp/chrome-user-data', '--crash-dumps-dir=/tmp/chrome-crash'],
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu',
+                   '--disable-crash-reporter', '--noerrdialogs', '--disable-breakpad',
+                   '--ignore-certificate-errors', '--user-data-dir=/tmp/chrome-user-data',
+                   '--crash-dumps-dir=/tmp/chrome-crash'],
         });
         console.log('Puppeteer browser started');
     } catch (err) {
