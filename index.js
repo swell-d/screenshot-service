@@ -18,8 +18,9 @@ let browser;
     try {
         browser = await puppeteer.launch({
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
                    '--disable-crash-reporter', '--noerrdialogs', '--disable-breakpad',
+                   '--enable-webgl', '--ignore-gpu-blocklist',
                    '--ignore-certificate-errors', '--user-data-dir=/tmp/chrome-user-data',
                    '--crash-dumps-dir=/tmp/chrome-crash'],
         });
