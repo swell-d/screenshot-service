@@ -20,6 +20,7 @@ let browser;
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
                    '--disable-crash-reporter', '--noerrdialogs', '--disable-breakpad',
+                   '--disable-features=Crashpad',
                    '--enable-webgl', '--ignore-gpu-blocklist',
                    '--ignore-certificate-errors', '--user-data-dir=/tmp/chrome-user-data',
                    '--crash-dumps-dir=/tmp/chrome-crash'],
