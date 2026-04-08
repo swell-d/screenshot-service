@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV LANG=en_US.UTF-8
 ENV DBUS_SESSION_BUS_ADDRESS=autolaunch:
 ENV PUPPETEER_CACHE_DIR=/home/node/.cache/puppeteer
-ENV CHROME_CRASHPAD_PIPE_NAME=0
 
 USER node
 WORKDIR /app
@@ -23,6 +22,9 @@ RUN curl -fsSL -o /app/index.js     https://raw.githubusercontent.com/swell-d/sc
 RUN npm install && \
     npm cache clean --force && \
     npx puppeteer browsers install chrome@stable
+
+RUN CHROME_DIR=$(find /home/node/.cache/puppeteer -name 'chrome' -type f -path '*/chrome-linux64/*' | head -1 | xargs dirname) && \
+    ln -sf /tmp/chrome-crashpad "$CHROME_DIR/Crashpad"
 
 EXPOSE 5015
 CMD ["npm", "start"]

@@ -12,25 +12,44 @@ if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, {recursive: true});
 }
 
-let browser;
+const CHROME_ARGS = [
+    '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
+    '--disable-crash-reporter', '--noerrdialogs', '--disable-breakpad',
+    '--disable-features=Crashpad',
+    '--enable-webgl', '--ignore-gpu-blocklist',
+    '--ignore-certificate-errors', '--user-data-dir=/tmp/chrome-user-data',
+    '--crash-dumps-dir=/tmp/chrome-crash',
+];
 
-(async () => {
+let browser = null;
+let launching = false;
+
+async function launchBrowser() {
+    if (launching) return;
+    launching = true;
     try {
-        browser = await puppeteer.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
-                   '--disable-crash-reporter', '--noerrdialogs', '--disable-breakpad',
-                   '--disable-features=Crashpad',
-                   '--enable-webgl', '--ignore-gpu-blocklist',
-                   '--ignore-certificate-errors', '--user-data-dir=/tmp/chrome-user-data',
-                   '--crash-dumps-dir=/tmp/chrome-crash'],
+        // Clean up previous user data to avoid stale locks
+        fs.rmSync('/tmp/chrome-user-data', {recursive: true, force: true});
+        fs.mkdirSync('/tmp/chrome-crashpad', {recursive: true});
+        browser = await puppeteer.launch({headless: true, args: CHROME_ARGS});
+        browser.on('disconnected', () => {
+            console.warn('Browser disconnected, will relaunch on next request');
+            browser = null;
         });
         console.log('Puppeteer browser started');
     } catch (err) {
-        console.error('Failed to launch Puppeteer browser:', err);
-        process.exit(1);
+        console.error('Failed to launch browser:', err.message);
+        browser = null;
+    } finally {
+        launching = false;
     }
-})();
+}
+
+async function getBrowser() {
+    if (browser && browser.connected) return browser;
+    await launchBrowser();
+    return browser;
+}
 
 app.get('/screenshot', async (req, res) => {
     const url = req.query.url;
@@ -38,7 +57,8 @@ app.get('/screenshot', async (req, res) => {
         return res.status(400).send('Missing ?url=');
     }
 
-    if (!browser) {
+    const b = await getBrowser();
+    if (!b) {
         return res.status(503).send('Browser not ready');
     }
 
@@ -48,7 +68,7 @@ app.get('/screenshot', async (req, res) => {
     let page;
 
     try {
-        page = await browser.newPage();
+        page = await b.newPage();
         await page.setViewport({width: 1536, height: 630});
 
         const response = await page.goto(url, {waitUntil: 'load', timeout: 30000});
@@ -96,15 +116,21 @@ app.get('/screenshot', async (req, res) => {
         res.status(500).send('Failed to take screenshot');
     } finally {
         if (page) {
-            await page.close();
+            try { await page.close(); } catch {}
         }
     }
 });
 
-app.get('/health', (req, res) => {
-    res.json({status: 'ok'});
+app.get('/health', async (req, res) => {
+    const b = await getBrowser();
+    if (b && b.connected) {
+        res.json({status: 'ok'});
+    } else {
+        res.status(503).json({status: 'browser down'});
+    }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Screenshot service listening on port ${PORT}`);
+    await launchBrowser();
 });
