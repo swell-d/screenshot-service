@@ -23,8 +23,5 @@ RUN npm install && \
     npm cache clean --force && \
     npx puppeteer browsers install chrome@stable
 
-RUN CHROME_DIR=$(find /home/node/.cache/puppeteer -name 'chrome' -type f -path '*/chrome-linux64/*' | head -1 | xargs dirname) && \
-    ln -sf /tmp/chrome-crashpad "$CHROME_DIR/Crashpad"
-
 EXPOSE 5015
 CMD ["npm", "start"]
