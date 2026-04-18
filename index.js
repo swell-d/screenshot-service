@@ -12,13 +12,17 @@ if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, {recursive: true});
 }
 
+const USER_DATA_DIR = '/tmp/chrome-user-data';
+const CRASHPAD_DIR = '/tmp/chrome-crashpad';
+
 const CHROME_ARGS = [
     '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
     '--disable-crash-reporter', '--noerrdialogs', '--disable-breakpad',
     '--disable-features=Crashpad',
     '--enable-webgl', '--ignore-gpu-blocklist',
-    '--ignore-certificate-errors', '--user-data-dir=/tmp/chrome-user-data',
-    '--crash-dumps-dir=/tmp/chrome-crash',
+    '--ignore-certificate-errors',
+    '--user-data-dir=${USER_DATA_DIR}',
+    '--crash-dumps-dir=${CRASHPAD_DIR}',
 ];
 
 let browser = null;
@@ -29,8 +33,9 @@ async function launchBrowser() {
     launching = true;
     try {
         // Clean up previous user data to avoid stale locks
-        fs.rmSync('/tmp/chrome-user-data', {recursive: true, force: true});
-        fs.mkdirSync('/tmp/chrome-crashpad', {recursive: true});
+        fs.rmSync(USER_DATA_DIR, {recursive: true, force: true});
+        fs.mkdirSync(USER_DATA_DIR, {recursive: true});
+        fs.mkdirSync(CRASHPAD_DIR, {recursive: true});
         browser = await puppeteer.launch({headless: true, args: CHROME_ARGS});
         browser.on('disconnected', () => {
             console.warn('Browser disconnected, will relaunch on next request');
