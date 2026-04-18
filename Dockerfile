@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV LANG=en_US.UTF-8
 ENV DBUS_SESSION_BUS_ADDRESS=autolaunch:
 ENV PUPPETEER_CACHE_DIR=/home/node/.cache/puppeteer
+ENV XDG_CONFIG_HOME=/tmp/.chromium
+ENV XDG_CACHE_HOME=/tmp/.chromium
 
 USER node
 WORKDIR /app
